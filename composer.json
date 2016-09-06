@@ -1,0 +1,25 @@
+{
+    "name": "kullar84/yii2-digidocservice",
+    "description": "Estonian DigiDoc Service",
+    "keywords": ["yii2", "signing", "auth","smartcard","digidocservice"],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/kullar84/yii2-digidocservice/issues",
+        "source": "https://github.com/kullar84/yii2-digidocservice"
+    },
+    "authors": [
+        {
+            "name": "Kullar Kert",
+            "email": "kullar@5dvision.ee",
+			"homepage": "http://www.5dvision.ee"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*",
+		"kullar84/hashcode-lib": "dev-master"
+    },
+    "autoload": {
+        "psr-4": { "kullar84\\digidocservice\\": "" }
+    }
+}
