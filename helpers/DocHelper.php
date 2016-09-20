@@ -207,8 +207,7 @@ class DocHelper
 	 */
 	private static function get_first_missing_datafile_no_from_dds()
 	{
-		$dds = DigiDocService::Instance();
-		$sig_doc_info = $dds->GetSignedDocInfo(array('Sesscode' => get_dds_session_code()));
+		$sig_doc_info = Yii::$app->digidocservice->GetSignedDocInfo(array('Sesscode' =>  Yii::$app->digidocservice->getDdsSession()));
 		$document_file_info = $sig_doc_info['SignedDocInfo'];
 		if (isset($document_file_info) && isset($document_file_info->DataFileInfo)) {
 			if (isset($document_file_info->DataFileInfo->Id)) {
@@ -243,7 +242,7 @@ class DocHelper
 	 */
 	public static function remove_datafile($to_be_removed_name)
 	{
-		$datafiles = Doc_Helper::get_datafiles_from_container();
+		$datafiles = self::get_datafiles_from_container();
 		$i = 0;
 		foreach ($datafiles as &$datafile) {
 			if ($datafile->getName() == $to_be_removed_name) {

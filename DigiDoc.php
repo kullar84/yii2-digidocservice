@@ -184,13 +184,11 @@ class DigiDoc extends DigiDocService
 		return $this;
 	}
 
-	public function addFiles2DocContainer($files)
+	public function addFile2DocContainer($file)
 	{
-		foreach ($files as $file) {
-			// Add data file as HASHCODE to the container in DDS session
-			$datafile_mime_type = FileHelper::getMimeType($file);
-			DocHelper::add_datafile_via_dds($file, $datafile_mime_type);
-		}
+		// Add data file as HASHCODE to the container in DDS session
+		$datafile_mime_type = FileHelper::getMimeType($file);
+		DocHelper::add_datafile_via_dds($file, $datafile_mime_type);
 
 		$dds_session_code = $this->getDdsSession();
 
@@ -204,10 +202,35 @@ class DigiDoc extends DigiDocService
 
 		// Create container with datafiles on the local server disk so that there would be one with help of which it is possible
 		// to restore the container if download is initiated.
-		foreach ($files as $file) {
-			DocHelper::create_container_with_files($container_data, array(new \SK\Digidoc\FileSystemDataFile($file)));
-		}
+		DocHelper::create_container_with_files($container_data, array(new \SK\Digidoc\FileSystemDataFile($file)));
+		
 		$this->debug_log("Container created, datafile added and session started with hashcode form of container. DDS session ID: '$dds_session_code'.");
+	}
+	
+	public function addExtraFile2DocContainer($file)
+	{
+		$datafile_mime_type = FileHelper::getMimeType($file);
+		DocHelper::add_datafile_via_dds($file, $datafile_mime_type);
+
+		$dds_session_code = $this->getDdsSession();
+
+		// Get the HASHCODE container from DDS
+		$get_signed_doc_response = $this->GetSignedDoc(array('Sesscode' => $dds_session_code));
+
+		$container_data = $get_signed_doc_response['SignedDocData'];
+		if (strpos($container_data, 'SignedDoc') === false) {
+			$container_data = base64_decode($container_data);
+		}
+		
+		// Merge previously added datafiles to an array with the new datafile.
+        $datafiles = DocHelper::get_datafiles_from_container();
+        array_push($datafiles, new \SK\Digidoc\FileSystemDataFile($file));
+
+		// Create container with datafiles on the local server disk so that there would be one with help of which it is possible
+		// to restore the container if download is initiated.
+		DocHelper::create_container_with_files($container_data, $datafiles);
+		
+		$this->debug_log("Extra datafile added. DDS session ID: '$dds_session_code'.");
 	}
 
 	/**
